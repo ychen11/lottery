@@ -14,11 +14,9 @@ public class FirstBookServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		resp.setContentType("text/plain");
-		resp.getWriter().println("Hello, really");
-	//	ResultGenerator rg = new Quick5Generator();
 		JSONObject json = new JSONObject();
 		try {
-			json.put("name0", "Yiwei");
+			json.put("name", "Yiwei");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -2,12 +2,13 @@ package util;
 
 import java.util.Random;
 
+import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
 public abstract class ResultGenerator {
 	protected int _generatedNumber;
 	protected int GenerateNumber(int from, int to){
-		if (from <= to){
+		if (from >= to){
 			throw new IllegalArgumentException("Out of Range");
 		}
 		Random rdmGen = new Random();
@@ -18,5 +19,5 @@ public abstract class ResultGenerator {
 	}
 	
 	abstract void GenNumberSequence();
-	abstract JSONObject getNumbers();
+	public abstract JSONObject getNumbers() throws JSONException;
 }

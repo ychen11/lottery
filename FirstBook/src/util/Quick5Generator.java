@@ -3,6 +3,8 @@ package util;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import com.google.appengine.labs.repackaged.org.json.JSONArray;
+import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
 public class Quick5Generator extends ResultGenerator {
@@ -11,10 +13,12 @@ public class Quick5Generator extends ResultGenerator {
 	private final int _rangeFrom = 1;
 	private final int _rangeTo = 39;
 	private ArrayList<ArrayList<Integer>> _numberList = null; 
+	private JSONObject _response = null;
 	
 	public Quick5Generator(int roundnumber){
 		_roundNumber = roundnumber;
 		_numberList = new ArrayList<ArrayList<Integer>>();
+		_response = new JSONObject();
 	}
 	
 	@Override
@@ -38,14 +42,24 @@ public class Quick5Generator extends ResultGenerator {
 				}
 			}
 			this._numberList.add(numbers);
+			_roundNumber--;
 		}
 	}
 	
 	@Override
-	JSONObject getNumbers() {
-		
-		return null;
+	public JSONObject getNumbers() throws JSONException{
+		GenNumberSequence();
+		if (_numberList.isEmpty() == true){
+			this._response.put("status", "empty");
+			return _response;
+		}
+		this._response.put("status", "full");
+		JSONArray numberArray = new JSONArray();
+		for (int i = 0; i < _numberList.size(); i++){
+			numberArray.put(_numberList.get(i));
+		}
+		_response.put("result", numberArray);
+		_response.put("category", "take 5");
+		return _response;
 	}
-	
-	
 }
