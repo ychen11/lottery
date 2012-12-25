@@ -3,6 +3,8 @@ package util;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import service.LotteryDB;
+
 import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
@@ -55,11 +57,16 @@ public class Quick5Generator extends ResultGenerator {
 		}
 		this._response.put("status", "full");
 		JSONArray numberArray = new JSONArray();
+		updateDB();
 		for (int i = 0; i < _numberList.size(); i++){
 			numberArray.put(_numberList.get(i));
 		}
 		_response.put("result", numberArray);
 		_response.put("category", "take 5");
 		return _response;
+	}
+	
+	private void updateDB(){
+		LotteryDB.getLotteryDBInstance().updateTake5Table(this._numberList);
 	}
 }

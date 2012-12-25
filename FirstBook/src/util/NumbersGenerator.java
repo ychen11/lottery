@@ -3,6 +3,8 @@ package util;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import service.LotteryDB;
+
 import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
@@ -57,6 +59,7 @@ public class NumbersGenerator extends ResultGenerator{
 		}
 		this._response.put("status", "full");
 		JSONArray numberArray = new JSONArray();
+		updateDB();
 		for (int i = 0; i < _numberList.size(); i++){
 			numberArray.put(_numberList.get(i));
 		}
@@ -65,4 +68,7 @@ public class NumbersGenerator extends ResultGenerator{
 		return _response;
 	}
 	
+	private void updateDB(){
+		LotteryDB.getLotteryDBInstance().updateNumbersTable(this._numberList);
+	}
 }

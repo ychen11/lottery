@@ -6,6 +6,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 
 import util.NumbersGenerator;
@@ -18,6 +22,7 @@ public class QueryServlet extends HttpServlet {
 			throws IOException {
 		resp.setContentType("text/plain");
 	//	resp.getWriter().println("Hello, this is QueryPage");
+		InitDB();
 		String type = req.getParameter("category");
 		if (type == null){
 			resp.getWriter().println("error: please set 'category' and 'param1'");
@@ -55,5 +60,9 @@ public class QueryServlet extends HttpServlet {
 			}
 		}
 		return "Need round number";
+	}
+	
+	private void InitDB(){
+		
 	}
 }
