@@ -1,12 +1,17 @@
 package service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 
 public class LotteryDB {
 	
@@ -95,6 +100,13 @@ public class LotteryDB {
 				_dataStore.put(nmbsentity);
 			}
 		}
+	}
+	
+	public List<Entity> QueryMaxNumbersTable(){
+		Query q = new Query("Numbers").addSort("count", SortDirection.DESCENDING);
+		PreparedQuery pq = _dataStore.prepare(q);
+		List<Entity> res = pq.asList(FetchOptions.Builder.withLimit(3));
+		return res;
 	}
 	
 }

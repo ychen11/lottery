@@ -1,6 +1,7 @@
 package firstbook;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +12,9 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
+import service.LotteryDB;
 import util.NumbersGenerator;
 import util.Quick5Generator;
 import util.ResultGenerator;
@@ -22,7 +25,6 @@ public class QueryServlet extends HttpServlet {
 			throws IOException {
 		resp.setContentType("text/plain");
 	//	resp.getWriter().println("Hello, this is QueryPage");
-		InitDB();
 		String type = req.getParameter("category");
 		if (type == null){
 			resp.getWriter().println("error: please set 'category' and 'param1'");
@@ -33,6 +35,9 @@ public class QueryServlet extends HttpServlet {
 		}
 		if (type.equals("numbers")){
 			resp.getWriter().println(QueryNumbers(req.getParameter("param1")));
+		}
+		if (type.equals("fetch")){
+			resp.getWriter().println(fetchMaxfromDB());
 		}
 	}
 	
@@ -62,7 +67,18 @@ public class QueryServlet extends HttpServlet {
 		return "Need round number";
 	}
 	
-	private void InitDB(){
-		
+	private String fetchMaxfromDB(){
+		List<Entity> result = LotteryDB.getLotteryDBInstance().QueryMaxNumbersTable();
+		JSONObject obj = new JSONObject();
+		for (int i = 0; i < result.size(); i++){
+			String tag = "num " + Integer.toString(i);
+			try {
+				obj.put(tag, result.get(i).getProperty("Number"));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return obj.toString();
 	}
 }
