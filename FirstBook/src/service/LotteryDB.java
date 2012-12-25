@@ -109,4 +109,11 @@ public class LotteryDB {
 		return res;
 	}
 	
+	public List<Entity> QueryMaxtk5Table(){
+		Query q = new Query("Take 5").addSort("count", SortDirection.DESCENDING);
+		PreparedQuery pq = _dataStore.prepare(q);
+		List<Entity> res = pq.asList(FetchOptions.Builder.withLimit(5));
+		return res;
+	}
+	
 }

@@ -36,9 +36,6 @@ public class QueryServlet extends HttpServlet {
 		if (type.equals("numbers")){
 			resp.getWriter().println(QueryNumbers(req.getParameter("param1")));
 		}
-		if (type.equals("fetch")){
-			resp.getWriter().println(fetchMaxfromDB());
-		}
 	}
 	
 	private String QueryTake5(String param){
@@ -65,20 +62,5 @@ public class QueryServlet extends HttpServlet {
 			}
 		}
 		return "Need round number";
-	}
-	
-	private String fetchMaxfromDB(){
-		List<Entity> result = LotteryDB.getLotteryDBInstance().QueryMaxNumbersTable();
-		JSONObject obj = new JSONObject();
-		for (int i = 0; i < result.size(); i++){
-			String tag = "num " + Integer.toString(i);
-			try {
-				obj.put(tag, result.get(i).getProperty("Number"));
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return obj.toString();
 	}
 }
