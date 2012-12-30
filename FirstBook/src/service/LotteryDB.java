@@ -9,8 +9,11 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.SortDirection;
 
 public class LotteryDB {
@@ -19,14 +22,14 @@ public class LotteryDB {
 	private static ArrayList<Key> _tk5Key;
 	private static ArrayList<Key> _numbersKey;
 	private static Key _tk5WinKey;
-	private static Key _numbersWinKey;
+	private static ArrayList<Key> _numbersWinKey;
 	private static DatastoreService _dataStore;
 	
 	private LotteryDB(){
 		_tk5Key = new ArrayList<Key>();
 		_numbersKey = new ArrayList<Key>();
 		_tk5WinKey = null;
-		_numbersWinKey = null;
+		_numbersWinKey = new ArrayList<Key>();
 		_dataStore = DatastoreServiceFactory.getDatastoreService();
 	}
 	
@@ -49,6 +52,7 @@ public class LotteryDB {
 	
 	private void InitNmbsTable(){
 		for (int i = 0; i < 10; i++){
+		//	Key k = KeyFactory.createKey("Numbers");
 			Entity nmbsEntity = new Entity("Numbers");
 			nmbsEntity.setProperty("Number", i);
 			nmbsEntity.setProperty("count", 0);
@@ -56,6 +60,36 @@ public class LotteryDB {
 			_dataStore.put(nmbsEntity);
 			_numbersKey.add(nmbsEntity.getKey());
 		}
+	}
+	
+	public void UpdateNumbsWinningTable(int [] numbers, String time){
+		Filter filter = new Query.FilterPredicate("time", FilterOperator.EQUAL, time);
+		Query q = new Query("NumbersWin").setFilter(filter);
+		PreparedQuery pq = _dataStore.prepare(q);
+		List<Entity> res = pq.asList(FetchOptions.Builder.withDefaults());
+		if (res.size() != 0)
+			return;
+		Entity numbersWinning = new Entity("NumbersWin");
+		for (int i = 0; i < numbers.length; i++){
+			numbersWinning.setProperty("number" + Integer.toString(i + 1), numbers[i]);
+		}
+		numbersWinning.setProperty("time", time);
+		_dataStore.put(numbersWinning);
+	}
+	
+	public void UpdateTake5WinningTable(int [] numbers, String time){
+		Filter filter = new Query.FilterPredicate("time", FilterOperator.EQUAL, time);
+		Query q = new Query("Take 5 Win").setFilter(filter);
+		PreparedQuery pq = _dataStore.prepare(q);
+		List<Entity> res = pq.asList(FetchOptions.Builder.withDefaults());
+		if (res.size() != 0)
+			return;
+		Entity numbersWinning = new Entity("Take 5 Win");
+		for (int i = 0; i < numbers.length; i++){
+			numbersWinning.setProperty("number" + Integer.toString(i + 1), numbers[i]);
+		}
+		numbersWinning.setProperty("time", time);
+		_dataStore.put(numbersWinning);
 	}
 	
 	public void updateTake5Table(ArrayList<ArrayList<Integer>> obj){
