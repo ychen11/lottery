@@ -27,11 +27,18 @@ public class DbServlet  extends HttpServlet{
 	
 	private String fetchMaxfromDB(String type){
 		List<Entity> result = null;
+		LotteryDB db = LotteryDB.getLotteryDBInstance();
 		if (type.equals("take5max")){
-			result = LotteryDB.getLotteryDBInstance().QueryMaxtk5Table();
+			result = db.QueryMaxtk5Table();
 		}
 		if (type.equals("numbersmax")){
-			result = LotteryDB.getLotteryDBInstance().QueryMaxNumbersTable();
+			result = db.QueryMaxNumbersTable();
+		}
+		if (type.equals("take5max_real")){
+			result = db.QueryMaxWinning(db.getTake5TableName(), 5);
+		}
+		if (type.equals("numbersmax_real")){
+			result = db.QueryMaxWinning(db.getNumbersTableName(), 3);
 		}
 		JSONObject obj = new JSONObject();
 		for (int i = 0; i < result.size(); i++){

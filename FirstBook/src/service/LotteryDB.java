@@ -25,6 +25,11 @@ public class LotteryDB {
 	private static ArrayList<Key> _numbersWinKey;
 	private static DatastoreService _dataStore;
 	
+	private static String _twnameTk5 = "Take 5 Win";
+	private static String _twnameNumbers = "NumbersWin";
+	private static String _tnameTk5 = "Take 5";
+	private static String _tnameNumbers = "Numbers";
+	
 	private LotteryDB(){
 		_tk5Key = new ArrayList<Key>();
 		_numbersKey = new ArrayList<Key>();
@@ -56,10 +61,55 @@ public class LotteryDB {
 			Entity nmbsEntity = new Entity("Numbers");
 			nmbsEntity.setProperty("Number", i);
 			nmbsEntity.setProperty("count", 0);
-			nmbsEntity.setProperty("Winnind", 0.0);
+			nmbsEntity.setProperty("Winning", 0.0);
 			_dataStore.put(nmbsEntity);
 			_numbersKey.add(nmbsEntity.getKey());
 		}
+	}
+	
+	private List<Entity> fetchWinningTables(String tableName){
+		Query q = new Query(tableName);
+		PreparedQuery pq = _dataStore.prepare(q);
+		List<Entity> res = pq.asList(FetchOptions.Builder.withDefaults());
+		return res;
+	}
+	
+	private void updatePickingTables(int [] source, String tableName){
+		if (source.length == 0){
+			System.out.println("Empty source data from winning table");
+			return;
+		}
+		int sum = 0;
+		for (int i = 0; i < source.length; i++){
+			sum += source[i];
+		}
+		for (int i = 0; i < source.length; i++){
+			double p = ((double)source[i])/sum;
+			Filter filter = new Query.FilterPredicate("Number", FilterOperator.EQUAL, i);
+			Query q = new Query(tableName).setFilter(filter);
+			PreparedQuery pq = _dataStore.prepare(q);
+			List<Entity> res = pq.asList(FetchOptions.Builder.withDefaults());
+			if (res.size() != 0){
+				res.get(0).setProperty("Winning", p);
+				this._dataStore.put(res.get(0));
+			}
+		}
+	}
+	
+	public String getTake5TableName(){
+		return this._tnameTk5;
+	}
+	
+	public String getNumbersTableName(){
+		return this._tnameNumbers;
+	}
+	
+	public String getTk5WinningTableName(){
+		return this._twnameTk5;
+	}
+	
+	public String getNumbersWinningTableName(){
+		return this._twnameNumbers;
 	}
 	
 	public void UpdateNumbsWinningTable(int [] numbers, String time){
@@ -136,6 +186,28 @@ public class LotteryDB {
 		}
 	}
 	
+	public void updatePickingTables(){
+		List<Entity> tk5 = fetchWinningTables(_twnameTk5);
+		List<Entity> numbers = fetchWinningTables(_twnameNumbers);
+		int [] tk5_counter = new int [40];
+		int [] numbers_counter = new int [10];
+		for (int i = 0; i < tk5.size(); i++){
+			tk5_counter[((Long) tk5.get(i).getProperty("number1")).intValue()]++;
+			tk5_counter[((Long) tk5.get(i).getProperty("number2")).intValue()]++;
+			tk5_counter[((Long) tk5.get(i).getProperty("number3")).intValue()]++;
+			tk5_counter[((Long) tk5.get(i).getProperty("number4")).intValue()]++;
+			tk5_counter[((Long) tk5.get(i).getProperty("number5")).intValue()]++;
+		}
+		for (int i = 0; i < numbers.size(); i++){
+			numbers_counter[((Long) numbers.get(i).getProperty("number1")).intValue()]++;
+			numbers_counter[((Long) numbers.get(i).getProperty("number2")).intValue()]++;
+			numbers_counter[((Long) numbers.get(i).getProperty("number3")).intValue()]++;
+		}
+		this.updatePickingTables(tk5_counter, this._tnameTk5);
+		this.updatePickingTables(numbers_counter, _tnameNumbers);
+		System.out.println("finish");
+	}
+	
 	public List<Entity> QueryMaxNumbersTable(){
 		Query q = new Query("Numbers").addSort("count", SortDirection.DESCENDING);
 		PreparedQuery pq = _dataStore.prepare(q);
@@ -147,6 +219,13 @@ public class LotteryDB {
 		Query q = new Query("Take 5").addSort("count", SortDirection.DESCENDING);
 		PreparedQuery pq = _dataStore.prepare(q);
 		List<Entity> res = pq.asList(FetchOptions.Builder.withLimit(5));
+		return res;
+	}
+	
+	public List<Entity> QueryMaxWinning(String tableName, int count){
+		Query q = new Query(tableName).addSort("Winning", SortDirection.DESCENDING);
+		PreparedQuery pq = _dataStore.prepare(q);
+		List<Entity> res = pq.asList(FetchOptions.Builder.withLimit(count));
 		return res;
 	}
 	

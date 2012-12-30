@@ -21,6 +21,7 @@ public class CronTaskServlet extends HttpServlet{
 		resp.setContentType("text/plain");
 		updateNumbersReal();
 		updateTake5Real();
+		LotteryDB.getLotteryDBInstance().updatePickingTables();
 	}
 	
 	private void updateNumbersReal(){
@@ -87,4 +88,6 @@ public class CronTaskServlet extends HttpServlet{
 		LotteryDB.getLotteryDBInstance().UpdateTake5WinningTable(output, timeoutput);
 		log("Finish take 5 update");
 	}
+	
+	
 }
