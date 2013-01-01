@@ -67,6 +67,22 @@ public class LotteryDB {
 		}
 	}
 	
+	private void getKeysFromTable(String tableName){
+		Query q = new Query(tableName).addSort("Number", SortDirection.ASCENDING);
+		PreparedQuery pq = _dataStore.prepare(q);
+		List<Entity> res = pq.asList(FetchOptions.Builder.withDefaults());
+		if (tableName.equals(_tnameTk5)){
+			for (int i = 0; i < res.size(); i++){
+				this._tk5Key.add(res.get(i).getKey());
+			}
+		}
+		if (tableName.equals(_tnameNumbers)){
+			for (int i = 0; i < res.size(); i++){
+				this._numbersKey.add(res.get(i).getKey());
+			}
+		}
+	}
+	
 	private List<Entity> fetchWinningTables(String tableName){
 		Query q = new Query(tableName);
 		PreparedQuery pq = _dataStore.prepare(q);
@@ -144,7 +160,9 @@ public class LotteryDB {
 	
 	public void updateTake5Table(ArrayList<ArrayList<Integer>> obj){
 		if (_tk5Key.size() == 0){
-			InitTk5Table();
+			this.getKeysFromTable(this._tnameTk5);
+			if (this._tk5Key.size() == 0)
+				InitTk5Table();
 		}
 		for(ArrayList<Integer> subList: obj){
 			for (int i = 0; i < subList.size(); i++){
@@ -166,7 +184,9 @@ public class LotteryDB {
 	
 	public void updateNumbersTable(ArrayList<ArrayList<Integer>> obj){
 		if (_numbersKey.size() == 0){
-			InitNmbsTable();
+			this.getKeysFromTable(this._tnameNumbers);
+			if (this._numbersKey.size() == 0)
+				InitNmbsTable();
 		}
 		for (ArrayList<Integer> subList: obj){
 			for (int i = 0; i < subList.size(); i++){

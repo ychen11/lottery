@@ -1,4 +1,4 @@
-package firstbook;
+package cyw.lottery.project;
 
 import java.io.IOException;
 

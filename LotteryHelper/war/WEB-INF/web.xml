@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 	<servlet>
-		<servlet-name>FirstBook</servlet-name>
-		<servlet-class>firstbook.FirstBookServlet</servlet-class>
+		<servlet-name>LotteryHelper</servlet-name>
+		<servlet-class>cyw.lottery.project.LotteryHelperServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>FirstBook</servlet-name>
-		<url-pattern>/firstbook</url-pattern>
+		<servlet-name>LotteryHelper</servlet-name>
+		<url-pattern>/lotteryhelper</url-pattern>
 	</servlet-mapping>
-		<servlet>
+	<servlet>
 		<servlet-name>Query</servlet-name>
-		<servlet-class>firstbook.QueryServlet</servlet-class>
+		<servlet-class>cyw.lottery.project.QueryServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Query</servlet-name>
@@ -17,15 +17,15 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>Statis</servlet-name>
-		<servlet-class>firstbook.DbServlet</servlet-class>
+		<servlet-class>cyw.lottery.project.DbServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Statis</servlet-name>
 		<url-pattern>/statis</url-pattern>
 	</servlet-mapping>
-	<servlet>
+		<servlet>
 		<servlet-name>Cron</servlet-name>
-		<servlet-class>firstbook.CronTaskServlet</servlet-class>
+		<servlet-class>cyw.lottery.project.CronTaskServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Cron</servlet-name>
